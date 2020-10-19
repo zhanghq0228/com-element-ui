@@ -13,22 +13,22 @@ export default {
 
   components: {
     ElScrollbar,
-    CascaderNode
+    CascaderNode,
   },
 
   props: {
     nodes: {
       type: Array,
-      required: true
+      required: true,
     },
-    index: Number
+    index: Number,
   },
 
   data() {
     return {
       activeNode: null,
       hoverTimer: null,
-      id: generateId()
+      id: generateId(),
     };
   },
 
@@ -38,7 +38,7 @@ export default {
     },
     menuId() {
       return `cascader-menu-${this.id}-${this.index}`;
-    }
+    },
   },
 
   methods: {
@@ -65,7 +65,10 @@ export default {
           <path style="pointer-events: auto;" fill="transparent" d="M${startX} ${bottom} L${offsetWidth} ${offsetHeight} V${bottom} Z" />
         `;
       } else if (!hoverTimer) {
-        this.hoverTimer = setTimeout(this.clearHoverZone, this.panel.config.hoverThreshold);
+        this.hoverTimer = setTimeout(
+          this.clearHoverZone,
+          this.panel.config.hoverThreshold
+        );
       }
     },
     clearHoverZone() {
@@ -76,7 +79,9 @@ export default {
 
     renderEmptyText(h) {
       return (
-        <div class="el-cascader-menu__empty-text">{ this.t('el.cascader.noData') }</div>
+        <div class="el-cascader-menu__empty-text">
+          {this.t('el.cascader.noData')}
+        </div>
       );
     },
     renderNodeList(h) {
@@ -92,20 +97,23 @@ export default {
         const { hasChildren } = node;
         return (
           <cascader-node
-            key={ node.uid }
-            node={ node }
-            node-id={ `${menuId}-${index}` }
-            aria-haspopup={ hasChildren }
-            aria-owns = { hasChildren ? menuId : null }
-            { ...events }></cascader-node>
+            key={node.uid}
+            node={node}
+            node-id={`${menuId}-${index}`}
+            aria-haspopup={hasChildren}
+            aria-owns={hasChildren ? menuId : null}
+            {...events}
+          ></cascader-node>
         );
       });
 
       return [
         ...nodes,
-        isHoverMenu ? <svg ref='hoverZone' class='el-cascader-menu__hover-zone'></svg> : null
+        isHoverMenu ? (
+          <svg ref="hoverZone" class="el-cascader-menu__hover-zone"></svg>
+        ) : null,
       ];
-    }
+    },
   },
 
   render(h) {
@@ -117,22 +125,26 @@ export default {
       events.nativeOn.mousemove = this.handleMouseMove;
       // events.nativeOn.mouseleave = this.clearHoverZone;
     }
-
-    return (
-      <el-scrollbar
-        tag="ul"
-        role="menu"
-        id={ menuId }
-        class="el-cascader-menu"
-        wrap-class="el-cascader-menu__wrap"
-        view-class={{
-          'el-cascader-menu__list': true,
-          'is-empty': isEmpty
-        }}
-        { ...events }>
-        { isEmpty ? this.renderEmptyText(h) : this.renderNodeList(h) }
-      </el-scrollbar>
-    );
-  }
+    if (isEmpty) {
+      return <span></span>;
+    } else {
+      return (
+        <el-scrollbar
+          tag="ul"
+          role="menu"
+          id={menuId}
+          class="el-cascader-menu"
+          wrap-class="el-cascader-menu__wrap"
+          view-class={{
+            'el-cascader-menu__list': true,
+            // 'is-empty': isEmpty
+          }}
+          {...events}
+        >
+          {isEmpty ? '' : this.renderNodeList(h)}
+        </el-scrollbar>
+      );
+    }
+  },
 };
 </script>
